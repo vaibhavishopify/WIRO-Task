@@ -1,0 +1,39 @@
+{% comment %} - card_product: Product Object for collection products loop {% endcomment %}
+<div class="">
+  {%- if card_product.featured_media -%}
+    <div class="relative">
+      {% render 'custom-feature-collection-image', card_product: card_product %}
+      <img src="{{ 'wishlist.svg' |  asset_url }}" class="absolute top-4 right-4" height="24" width="24"/>
+    </div>
+{%- endif -%}
+  <div class=" p-5">
+    <div class="flex justify-between gap-1">
+    <div class="flex flex-col gap-1">
+      <div class="text-[16px] text-[#202BCB] truncate">{{ card_product.title | escape }}</div>
+      {% render 'price', product: card_product, price_class: '!text-[14px] !text-[#202BCB]', show_compare_at_price: true %}
+    </div>
+    
+      <form method="post" action="/cart/add">
+        <input type="hidden" name="id" value="{{ card_product.variants.first.id }}" />
+        <input type="hidden" type="number" id="quantity" name="quantity" value="1"/>
+        <button type="submit" class="svg-submit-button">
+          <img src="{{ 'plus-atc-button.svg' |  asset_url }}" width="24" height="24"/>
+        </button>
+      </form>
+    </div>
+      {% assign prod_variant_count = 0 %}
+      {% if card_product.available and card_product.variants.size > 1 %}
+        {% for option in card_product.options %}
+          {% if option contains 'Color' %}
+            {% for variant in card_product.variants %}
+              {% assign prod_variant_count = prod_variant_count | plus: 1 %}
+            {% endfor %}
+          {% else %}
+            
+            {% break %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+      {% if prod_variant_count > 0 %}<div class="border-b border-[#E4E5F9] !block my-2"></div> <div class="text-[14px] text-[#202BCB]">{{ prod_variant_count }} colors Available</div>{% endif %}
+  </div>
+  </div>
